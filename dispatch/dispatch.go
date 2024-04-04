@@ -19,13 +19,11 @@ type Dispatcher struct {
 }
 
 func (d *Dispatcher) Register(data any, handler any) {
-	key := reflect.TypeOf(data).String()
-	d.handlers[key] = handler
+	d.handlers[handlerKey(data)] = handler
 }
 
 func (d *Dispatcher) Exec(data any) error {
-	key := reflect.TypeOf(data).String()
-	handler := d.handlers[key]
+	handler := d.handlers[handlerKey(data)]
 
 	x := reflect.ValueOf(handler)
 	values := []reflect.Value{
@@ -38,4 +36,8 @@ func (d *Dispatcher) Exec(data any) error {
 	}
 
 	return res.(error)
+}
+
+func handlerKey(t any) string {
+	return reflect.TypeOf(t).String()
 }
